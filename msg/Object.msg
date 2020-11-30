@@ -1,0 +1,4 @@
+std_msgs/Int32 obj_id
+ObjectGeneral object_general
+ObjectExtended object_extended
+ObjectQuality object_quality
