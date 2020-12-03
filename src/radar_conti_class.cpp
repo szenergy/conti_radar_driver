@@ -4,7 +4,8 @@ Radar_Conti::Radar_Conti(const ros::NodeHandle &nh) : nh(nh) {};
 
 void Radar_Conti::init(can::DriverInterfaceSharedPtr &driver_)
 {
-    pub = nh.advertise<visualization_msgs::MarkerArray>("radar_objects",0);
+    pub_marker = nh.advertise<visualization_msgs::MarkerArray>("radar_objects_marker",0);
+    pub_objects = nh.advertise<radar_conti::ObjectList>("radar_object_list",0);
     this->driver_ = driver_;
     this->frame_listener_ = driver_->createMsgListenerM(this,&Radar_Conti::can_frame_callback);
 }
@@ -164,7 +165,7 @@ void Radar_Conti::publish_object_map() {
         // }
 
 
-        // object_list_publisher_->publish(object_list_);
+        pub_objects.publish(object_list_);
         // tf_publisher_->publish(transforms);
 
         visualization_msgs::MarkerArray marker_array;
@@ -289,7 +290,7 @@ void Radar_Conti::publish_object_map() {
         
 
         }
-        pub.publish(marker_array);
+        pub_marker.publish(marker_array);
 
 }
 

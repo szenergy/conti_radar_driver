@@ -52,7 +52,8 @@ private:
     can::FrameListenerConstSharedPtr frame_listener_;
     //can::DriverInterfaceSharedPtr radar_can_output;
     //create Publisher
-    ros::Publisher pub;
+    ros::Publisher pub_marker;
+    ros::Publisher pub_objects;
     std::string pub_marker_array_topic_name = "/ars408/marker_array";
     // std::string pub_object_list_topic_name = "/ars408/objectlist";
     // std::string pub_tf_topic_name = "/tf";
