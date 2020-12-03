@@ -128,10 +128,12 @@ void Radar_Conti::handle_cluster_list(const can::Frame &msg)
 {
     if(msg.id == ID_Cluster_0_Status)
     {
-        publish_object_map();
+        publish_cluster_map();
 
         cluster_list.header.stamp = ros::Time::now();
         cluster_list.cluster_count.data = GET_Cluster_0_Status_Cluster_NofClustersNear(msg.data);
+
+        cluster_map_.clear();
     }
     if(msg.id == ID_Cluster_1_General)
     {
