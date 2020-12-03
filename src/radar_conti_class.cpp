@@ -164,8 +164,6 @@ void Radar_Conti::publish_object_map() {
 
         // }
 
-
-        pub_objects.publish(object_list_);
         // tf_publisher_->publish(transforms);
 
         visualization_msgs::MarkerArray marker_array;
@@ -285,11 +283,14 @@ void Radar_Conti::publish_object_map() {
                         mobject.lifetime = ros::Duration(0.4);
                         mobject.frame_locked = false;
 
+                        object_list_.objects.push_back(itr->second);
+
                         marker_array.markers.push_back(mobject);
                 }
         
 
         }
+        pub_objects.publish(object_list_);
         pub_marker.publish(marker_array);
 
 }
