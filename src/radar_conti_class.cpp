@@ -73,10 +73,8 @@ void Radar_Conti::handle_object_list(const can::Frame &msg)
                 CALC_Obj_1_General_Obj_RCS(GET_Obj_1_General_Obj_RCS(msg.data), 1.0);
 
         //insert object into map
-        if(o.object_general.obj_rcs.data > 1.0)
-        {
-               object_map_.insert(std::pair<int, radar_conti::Object>(id, o));
-        }
+        
+        object_map_.insert(std::pair<int, radar_conti::Object>(id, o));
     }
 
     if (msg.id == ID_Obj_2_Quality) {
@@ -189,51 +187,7 @@ void Radar_Conti::publish_object_map() {
         
         std::map<int, radar_conti::Object>::iterator itr;
 
-        // tf::Transform transforms;
-
-        // for (itr = object_map_.begin(); itr != object_map_.end(); ++itr) {
-
-        //         std::string tf_name = "object_" + std::to_string(itr->first);
-
-        //         geometry_msgs::TransformStamped tf;
-
-        //         tf.header.stamp = ros::Time::now();
-        //         tf.header.frame_id = frame_id_;
-
-        //         tf.child_frame_id = tf_name;
-
-
-        //         transforms.setOrigin(tf::Vector3(itr->second.object_general.obj_distlong.data,itr->second.object_general.obj_distlat.data,1.0));
-
-        //         tf.transform.translation.x = itr->second.object_general.obj_distlong.data;
-        //         tf.transform.translation.y = itr->second.object_general.obj_distlat.data;
-        //         tf.transform.translation.z = 1.0;
-
-        //         transforms.setRotation(tf::Quaternion(0.0,0.0,0.0));
-
-        //         tf.transform.rotation.w = 1.0;
-        //         tf.transform.rotation.x = 0.0;
-        //         tf.transform.rotation.y = 0.0;
-        //         tf.transform.rotation.y = 0.0;
-
-        //         transforms.transforms.push_back(tf);
-
-
-        //         object_list_.objects.push_back(itr->second); 
-
-        // }
-
-        // tf_publisher_->publish(transforms);
-
         visualization_msgs::MarkerArray marker_array;
-        // marker_array.markers.clear();
-
-        // //delete old marker
-        // visualization_msgs::Marker ma;
-        // ma.action=3;
-        // marker_array.markers.push_back(ma);
-        // pub.publish(marker_array);
-        // marker_array.markers.clear();
 
         //marker for ego car
         visualization_msgs::Marker mEgoCar;
@@ -271,81 +225,78 @@ void Radar_Conti::publish_object_map() {
 
         for (itr = object_map_.begin(); itr != object_map_.end(); ++itr) {
 
-                if(itr->second.object_general.obj_rcs.data > 1)
-                {
-                        visualization_msgs::Marker mobject;
-                        visualization_msgs::Marker mtext;
+                visualization_msgs::Marker mobject;
+                visualization_msgs::Marker mtext;
 
-                        mtext.header.stamp = ros::Time::now();
-                        mtext.header.frame_id = frame_id_;
-                        mtext.ns = "";
-                        mtext.id = (itr->first+100);
-                        mtext.type = 1; //Cube
-                        mtext.action = 0; // add/modify
-                        mtext.pose.position.x = itr->second.object_general.obj_distlong.data;
-                        mtext.pose.position.y = itr->second.object_general.obj_distlat.data;
-                        mtext.pose.position.z = 4.0;
+                mtext.header.stamp = ros::Time::now();
+                mtext.header.frame_id = frame_id_;
+                mtext.ns = "";
+                mtext.id = (itr->first+100);
+                mtext.type = 1; //Cube
+                mtext.action = 0; // add/modify
+                mtext.pose.position.x = itr->second.object_general.obj_distlong.data;
+                mtext.pose.position.y = itr->second.object_general.obj_distlat.data;
+                mtext.pose.position.z = 4.0;
 
-                
-                        //myQuaternion.setRPY(M_PI / 2, 0, 0);
-                        myQuaternion.setRPY(0, 0, 0);
+        
+                //myQuaternion.setRPY(M_PI / 2, 0, 0);
+                myQuaternion.setRPY(0, 0, 0);
 
-                        mtext.pose.orientation.w = myQuaternion.getW();
-                        mtext.pose.orientation.x = myQuaternion.getX();
-                        mtext.pose.orientation.y = myQuaternion.getY();
-                        mtext.pose.orientation.z = myQuaternion.getZ();
-                        // mtext.scale.x = 1.0;
-                        // mtext.scale.y = 1.0;
-                        mtext.scale.z = 2.0;
-                        mtext.color.r = 1.0;
-                        mtext.color.g = 1.0;
-                        mtext.color.b = 1.0;
-                        mtext.color.a = 1.0;
-                        mtext.lifetime = ros::Duration(0.2);
-                        mtext.frame_locked = false;
-                        mtext.type=9;
-                        mtext.text= "object_" + std::to_string(itr->first) + ": \n" 
-                        + " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) + "dBm^2" + " \n" 
-                        + " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
-                        + " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
-                        + " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data) + "degree" + " \n"
-                        + " Class: " + object_classes[itr->second.object_extended.obj_class.data] + "\n";
+                mtext.pose.orientation.w = myQuaternion.getW();
+                mtext.pose.orientation.x = myQuaternion.getX();
+                mtext.pose.orientation.y = myQuaternion.getY();
+                mtext.pose.orientation.z = myQuaternion.getZ();
+                // mtext.scale.x = 1.0;
+                // mtext.scale.y = 1.0;
+                mtext.scale.z = 2.0;
+                mtext.color.r = 1.0;
+                mtext.color.g = 1.0;
+                mtext.color.b = 1.0;
+                mtext.color.a = 1.0;
+                mtext.lifetime = ros::Duration(0.2);
+                mtext.frame_locked = false;
+                mtext.type=9;
+                mtext.text= "object_" + std::to_string(itr->first) + ": \n" 
+                + " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) + "dBm^2" + " \n" 
+                + " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
+                + " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
+                + " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data) + "degree" + " \n"
+                + " Class: " + object_classes[itr->second.object_extended.obj_class.data] + "\n";
 
 
-                        marker_array.markers.push_back(mtext);
+                marker_array.markers.push_back(mtext);
 
 
 
-                        mobject.header.stamp = ros::Time::now();
-                        mobject.header.frame_id = frame_id_;
-                        mobject.ns = "";
-                        mobject.id = itr->first;
-                        mobject.type = 1; //Cube
-                        mobject.action = 0; // add/modify
-                        mobject.pose.position.x = itr->second.object_general.obj_distlong.data;
-                        mobject.pose.position.y = itr->second.object_general.obj_distlat.data;
-                        mobject.pose.position.z = 1.0;
+                mobject.header.stamp = ros::Time::now();
+                mobject.header.frame_id = frame_id_;
+                mobject.ns = "";
+                mobject.id = itr->first;
+                mobject.type = 1; //Cube
+                mobject.action = 0; // add/modify
+                mobject.pose.position.x = itr->second.object_general.obj_distlong.data;
+                mobject.pose.position.y = itr->second.object_general.obj_distlat.data;
+                mobject.pose.position.z = 1.0;
 
-                        myQuaternion.setRPY(0, 0, 0);
+                myQuaternion.setRPY(0, 0, 0);
 
-                        mobject.pose.orientation.w = myQuaternion.getW();
-                        mobject.pose.orientation.x = myQuaternion.getX();
-                        mobject.pose.orientation.y = myQuaternion.getY();
-                        mobject.pose.orientation.z = myQuaternion.getZ();
-                        mobject.scale.x = itr->second.object_extended.obj_length.data;
-                        mobject.scale.y = itr->second.object_extended.obj_width.data;
-                        mobject.scale.z = 1.0;
-                        mobject.color.r = 0.0;
-                        mobject.color.g = 1.0;
-                        mobject.color.b = 0.0;
-                        mobject.color.a = 1.0;
-                        mobject.lifetime = ros::Duration(0.2);
-                        mobject.frame_locked = false;
+                mobject.pose.orientation.w = myQuaternion.getW();
+                mobject.pose.orientation.x = myQuaternion.getX();
+                mobject.pose.orientation.y = myQuaternion.getY();
+                mobject.pose.orientation.z = myQuaternion.getZ();
+                mobject.scale.x = itr->second.object_extended.obj_length.data;
+                mobject.scale.y = itr->second.object_extended.obj_width.data;
+                mobject.scale.z = 1.0;
+                mobject.color.r = 0.0;
+                mobject.color.g = 1.0;
+                mobject.color.b = 0.0;
+                mobject.color.a = 1.0;
+                mobject.lifetime = ros::Duration(0.2);
+                mobject.frame_locked = false;
 
-                        object_list_.objects.push_back(itr->second);
+                object_list_.objects.push_back(itr->second);
 
-                        marker_array.markers.push_back(mobject);
-                }
+                marker_array.markers.push_back(mobject);
         
 
         }
