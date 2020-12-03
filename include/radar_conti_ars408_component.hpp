@@ -54,20 +54,30 @@ private:
     //create Publisher
     ros::Publisher pub_marker;
     ros::Publisher pub_objects;
+    ros::Publisher pub_cluster;
+    ros::Publisher pub_cluster_list;
     std::string pub_marker_array_topic_name = "/ars408/marker_array";
     // std::string pub_object_list_topic_name = "/ars408/objectlist";
     // std::string pub_tf_topic_name = "/tf";
     std::string frame_id_ = "/map";
     
+    void handle_cluster_list(const can::Frame &msg);
+
     //create handle_object_list
     void handle_object_list(const can::Frame &msg);
     //create publish_object_map
     void publish_object_map();
+
+    void publish_cluster_map();
     //create map container for object list
     std::map<int,radar_conti::Object> object_map_;
 
+    std::map<int,radar_conti::Cluster> cluster_map_;
+    
+
     //create data structures for radar object list
     radar_conti::ObjectList object_list_;
+    radar_conti::ClusterList cluster_list;
 
     //additional variables
     int operation_mode_;
