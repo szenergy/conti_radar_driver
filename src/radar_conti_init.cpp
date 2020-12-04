@@ -12,7 +12,7 @@ int main(int argc, char** argv)
     const std::string can_device = "can1";
     if(!driver->init(can_device,0)) 
     {
-        ROS_FATAL("Failed to initialize can_device at CAN1");
+        ROS_FATAL("Failed to initialize can_device at %s",can_device.c_str());
         return 1;
     }
     else ROS_INFO("Successfully connected to %s.", can_device.c_str());

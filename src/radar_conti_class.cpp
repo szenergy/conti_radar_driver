@@ -6,8 +6,8 @@ void Radar_Conti::init(can::DriverInterfaceSharedPtr &driver_)
 {
     pub_marker = nh.advertise<visualization_msgs::MarkerArray>("radar_objects_marker",0);
     pub_objects = nh.advertise<radar_conti::ObjectList>("radar_object_list",0);
-    pub_cluster = nh.advertise<visualization_msgs::MarkerArray>("cluster_markers",0);
-    pub_cluster_list = nh.advertise<radar_conti::ClusterList>("cluster_list",0);
+    pub_cluster = nh.advertise<visualization_msgs::MarkerArray>("radar_cluster_markers",0);
+    pub_cluster_list = nh.advertise<radar_conti::ClusterList>("radar_cluster_list",0);
 
     this->driver_ = driver_;
     this->frame_listener_ = driver_->createMsgListenerM(this,&Radar_Conti::can_frame_callback);
@@ -21,10 +21,10 @@ void Radar_Conti::can_frame_callback(const can::Frame &msg)
     if (operation_mode_ == 0x00)
         return;
 
-    if(operation_mode_ == 0x01)
+    else if(operation_mode_ == 0x01)
         handle_object_list(msg);
 
-    if(operation_mode_ == 0x02)
+    else if(operation_mode_ == 0x02)
         handle_cluster_list(msg);
 }
 void Radar_Conti::handle_object_list(const can::Frame &msg)
@@ -310,14 +310,6 @@ void Radar_Conti::publish_cluster_map()
 
         
         visualization_msgs::MarkerArray marker_array;
-        // marker_array.markers.clear();
-
-        // //delete old marker
-        // visualization_msgs::Marker ma;
-        // ma.action=3;
-        // marker_array.markers.push_back(ma);
-        // pub.publish(marker_array);
-        // marker_array.markers.clear();
 
         //marker for ego car
         visualization_msgs::Marker mEgoCar;
