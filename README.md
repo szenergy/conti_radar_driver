@@ -11,7 +11,7 @@ make sure to clone in to your catkin workspace src folder
 or if you want to build the package separately: `catkin build radar_conti`
 
 ## Run
-source in: `~/your_catkin_workspace/devel.setup.bash` \
+source in: `source ~/your_catkin_workspace/devel.setup.bash` \
 then run the node: `rosrun radar_conti radar_conti`
 
 ## Radar configuration CAN frames
