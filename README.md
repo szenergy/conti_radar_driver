@@ -20,6 +20,6 @@ More [CAN configuration frames](https://github.com/lf2653/myrepository)
 
 Change between Object detection and Cluster detection:\
 `
-cansend can0 200#F8000000089C0000 // Objects detection with all extended properties`\
-`cansend can0 200#F8000000109C0000 // Clusters detection with all extended properties
+cansend can1 200#F8000000089C0000 // Objects detection with all extended properties`\
+`cansend can1 200#F8000000109C0000 // Clusters detection with all extended properties
 `
