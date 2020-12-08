@@ -39,7 +39,7 @@ typedef unsigned short int uword;
 std::map<int,radar_conti::Object> object_map_;
 radar_conti::ObjectList object_list_;
 
-std::string frame_id_ = "/map";
+std::string frame_id_ = "/radar";
 
 const std::string object_classes[8] = {"Point","Car","Truck","Pedestrian","Motorcycle","Bicycle","Wide","Reserved"};
 
@@ -100,7 +100,7 @@ void publish_object_map() {
 
         mEgoCar.header.stamp = ros::Time::now();
         mEgoCar.header.frame_id = frame_id_;
-        mEgoCar.ns = "";
+        mEgoCar.ns = "egocar";
         mEgoCar.id = 999;
 
         //if you want to use a cube comment out the next 2 line
@@ -138,7 +138,7 @@ void publish_object_map() {
 
                         mtext.header.stamp = ros::Time::now();
                         mtext.header.frame_id = frame_id_;
-                        mtext.ns = "";
+                        mtext.ns = "text";
                         mtext.id = (itr->first+100);
                         mtext.type = 1; //Cube
                         mtext.action = 0; // add/modify
@@ -178,7 +178,7 @@ void publish_object_map() {
 
                         mobject.header.stamp = ros::Time::now();
                         mobject.header.frame_id = frame_id_;
-                        mobject.ns = "";
+                        mobject.ns = "objects";
                         mobject.id = itr->first;
                         mobject.type = 1; //Cube
                         mobject.action = 0; // add/modify
@@ -195,10 +195,10 @@ void publish_object_map() {
                         mobject.scale.x = itr->second.object_extended.obj_length.data;
                         mobject.scale.y = itr->second.object_extended.obj_width.data;
                         mobject.scale.z = 1.0;
-                        mobject.color.r = 0.0;
-                        mobject.color.g = 1.0;
-                        mobject.color.b = 0.0;
-                        mobject.color.a = 1.0;
+                        mobject.color.r = 0.1;
+                        mobject.color.g = 0.9;
+                        mobject.color.b = 0.1;
+                        mobject.color.a = 0.5;
                         mobject.lifetime = ros::Duration(0.4);
                         mobject.frame_locked = false;
 

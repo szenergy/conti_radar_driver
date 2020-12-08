@@ -194,7 +194,7 @@ void Radar_Conti::publish_object_map() {
 
         mEgoCar.header.stamp = ros::Time::now();
         mEgoCar.header.frame_id = frame_id_;
-        mEgoCar.ns = "";
+        mEgoCar.ns = "ego";
         mEgoCar.id = 999;
 
         //if you want to use a cube comment out the next 2 line
@@ -217,7 +217,7 @@ void Radar_Conti::publish_object_map() {
         mEgoCar.color.r = 0.0;
         mEgoCar.color.g = 0.0;
         mEgoCar.color.b = 1.0;
-        mEgoCar.color.a = 1.0;
+        mEgoCar.color.a = 0.4;
         mEgoCar.lifetime = ros::Duration(0.2);
         mEgoCar.frame_locked = false;
 
@@ -230,7 +230,7 @@ void Radar_Conti::publish_object_map() {
 
                 mtext.header.stamp = ros::Time::now();
                 mtext.header.frame_id = frame_id_;
-                mtext.ns = "";
+                mtext.ns = "text";
                 mtext.id = (itr->first+100);
                 mtext.type = 1; //Cube
                 mtext.action = 0; // add/modify
@@ -270,7 +270,7 @@ void Radar_Conti::publish_object_map() {
 
                 mobject.header.stamp = ros::Time::now();
                 mobject.header.frame_id = frame_id_;
-                mobject.ns = "";
+                mobject.ns = "objects";
                 mobject.id = itr->first;
                 mobject.type = 1; //Cube
                 mobject.action = 0; // add/modify
@@ -290,7 +290,7 @@ void Radar_Conti::publish_object_map() {
                 mobject.color.r = 0.0;
                 mobject.color.g = 1.0;
                 mobject.color.b = 0.0;
-                mobject.color.a = 1.0;
+                mobject.color.a = 0.5;
                 mobject.lifetime = ros::Duration(0.2);
                 mobject.frame_locked = false;
 
@@ -316,7 +316,7 @@ void Radar_Conti::publish_cluster_map()
 
         mEgoCar.header.stamp = ros::Time::now();
         mEgoCar.header.frame_id = frame_id_;
-        mEgoCar.ns = "";
+        mEgoCar.ns = "ego";
         mEgoCar.id = 999;
 
         //if you want to use a cube comment out the next 2 line
@@ -352,7 +352,7 @@ void Radar_Conti::publish_cluster_map()
 
                 mtext.header.stamp = ros::Time::now();
                 mtext.header.frame_id = frame_id_;
-                mtext.ns = "";
+                mtext.ns = "text";
                 mtext.id = (itr->first+100);
                 mtext.type = 1; //Cube
                 mtext.action = 0; // add/modify
@@ -390,7 +390,7 @@ void Radar_Conti::publish_cluster_map()
 
                 mobject.header.stamp = ros::Time::now();
                 mobject.header.frame_id = frame_id_;
-                mobject.ns = "";
+                mobject.ns = "objects";
                 mobject.id = itr->first;
                 mobject.type = 1; //Cube
                 mobject.action = 0; // add/modify

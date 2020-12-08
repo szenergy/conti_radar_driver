@@ -59,7 +59,7 @@ private:
     std::string pub_marker_array_topic_name = "/ars408/marker_array";
     // std::string pub_object_list_topic_name = "/ars408/objectlist";
     // std::string pub_tf_topic_name = "/tf";
-    std::string frame_id_ = "/map";
+    std::string frame_id_ = "/radar";
     
     void handle_cluster_list(const can::Frame &msg);
 
