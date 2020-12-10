@@ -233,9 +233,9 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-# add_executable(radar_conti src/radar_conit.cpp)
-# add_dependencies(radar_conti ${radar_conti_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-# target_link_libraries(radar_conti ${catkin_LIBRARIES})
+add_executable(radar_info src/radar_info.cpp)
+add_dependencies(radar_info ${radar_info_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(radar_info ${catkin_LIBRARIES})
 
 
 
