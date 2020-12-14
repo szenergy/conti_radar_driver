@@ -6,6 +6,7 @@ void Radar_Conti::init(can::DriverInterfaceSharedPtr &driver_)
 {
     pub_marker = nh.advertise<visualization_msgs::MarkerArray>("radar_objects_marker",0);
     pub_objects = nh.advertise<radar_conti::ObjectList>("radar_object_list",0);
+    collison_obj_pub = nh.advertise<radar_conti::CollisonList>("radar_obj_collison",0);
     pub_cluster = nh.advertise<visualization_msgs::MarkerArray>("radar_cluster_markers",0);
     pub_cluster_list = nh.advertise<radar_conti::ClusterList>("radar_cluster_list",0);
 
@@ -37,6 +38,7 @@ void Radar_Conti::handle_object_list(const can::Frame &msg)
         object_list_.object_count.data = GET_Obj_0_Status_Obj_NofObjects(msg.data);
 
         object_map_.clear();
+        collison_objects.clear();
 
     }
 
@@ -118,6 +120,11 @@ void Radar_Conti::handle_object_list(const can::Frame &msg)
 
         object_map_[id].object_extended.obj_width.data =
                 CALC_Obj_3_Extended_Obj_Width(GET_Obj_3_Extended_Obj_Width(msg.data), 1.0);
+    }
+    if(msg.id == ID_Obj_4_Warning)
+    {
+        const int obj_war = CALC_Obj_4_Warning_Obj_ID(GET_Obj_4_Warning_Obj_ID(msg.data),1.0);
+        collison_objects.insert(obj_war); 
     }
     publish_object_map();
 
@@ -256,16 +263,6 @@ void Radar_Conti::publish_object_map() {
                 mtext.lifetime = ros::Duration(0.2);
                 mtext.frame_locked = false;
                 mtext.type=9;
-                mtext.text= "object_" + std::to_string(itr->first) + ": \n" 
-                + " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) + "dBm^2" + " \n" 
-                + " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
-                + " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
-                + " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data) + "degree" + " \n"
-                + " Class: " + object_classes[itr->second.object_extended.obj_class.data] + "\n";
-
-
-                marker_array.markers.push_back(mtext);
-
 
 
                 mobject.header.stamp = ros::Time::now();
@@ -287,8 +284,32 @@ void Radar_Conti::publish_object_map() {
                 mobject.scale.x = itr->second.object_extended.obj_length.data;
                 mobject.scale.y = itr->second.object_extended.obj_width.data;
                 mobject.scale.z = 1.0;
-                mobject.color.r = 0.0;
-                mobject.color.g = 1.0;
+                if(collison_objects.find(itr->first) != collison_objects.end())
+                {
+                        mobject.color.r = 1.0;
+                        mobject.color.g = 0.0;
+                        mtext.text= "object_" + std::to_string(itr->first) + ": \n" 
+                        + " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) + "dBm^2" + " \n" 
+                        + " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
+                        + " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
+                        + " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data) + "degree" + " \n"
+                        + " Class: " + object_classes[itr->second.object_extended.obj_class.data] +"\n"
+                        + " Collison with Object\n";
+                        radar_conti::CollisonObj collison_item;
+                        collison_item.obj_id = itr->second.obj_id;
+                        coll_list.objects.push_back(collison_item);
+                }
+                else
+                {
+                        mobject.color.r = 0.0;
+                        mobject.color.g = 1.0;
+                        mtext.text= "object_" + std::to_string(itr->first) + ": \n" 
+                        + " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) + "dBm^2" + " \n" 
+                        + " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
+                        + " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
+                        + " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data) + "degree" + " \n"
+                        + " Class: " + object_classes[itr->second.object_extended.obj_class.data] + "\n";
+                }
                 mobject.color.b = 0.0;
                 mobject.color.a = 0.5;
                 mobject.lifetime = ros::Duration(0.2);
@@ -298,8 +319,10 @@ void Radar_Conti::publish_object_map() {
 
                 marker_array.markers.push_back(mobject);
         
+                marker_array.markers.push_back(mtext);
 
         }
+        collison_obj_pub.publish(coll_list);
         pub_objects.publish(object_list_);
         pub_marker.publish(marker_array);
 

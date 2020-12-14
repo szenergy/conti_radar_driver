@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
         can::DriverInterfaceSharedPtr radar_output = std::make_shared<can::ThreadedSocketCANInterface> ();
 
-        if(!radar_output->init("can0",0)) 
+        if(!radar_output->init("can1",0)) 
         {
                 ROS_FATAL("Failed to initialize can_device at CAN0");
                 return 1;

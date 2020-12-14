@@ -20,6 +20,8 @@
 #include <radar_conti/RadarState.h>
 #include <radar_conti/ClusterStatus.h>
 #include <radar_conti/Frame.h>
+#include <radar_conti/CollisonObj.h>
+#include <radar_conti/CollisonList.h>
 
 
 #include <chrono>
@@ -28,6 +30,7 @@
 #include <utility>
 #include <math.h>
 #include <cstddef>
+#include <set>
 
 
 
@@ -56,6 +59,7 @@ private:
     ros::Publisher pub_objects;
     ros::Publisher pub_cluster;
     ros::Publisher pub_cluster_list;
+    ros::Publisher collison_obj_pub;
     std::string pub_marker_array_topic_name = "/ars408/marker_array";
     // std::string pub_object_list_topic_name = "/ars408/objectlist";
     // std::string pub_tf_topic_name = "/tf";
@@ -73,9 +77,12 @@ private:
     std::map<int,radar_conti::Object> object_map_;
 
     std::map<int,radar_conti::Cluster> cluster_map_;
+
+    std::set<int> collison_objects;
     
 
     //create data structures for radar object list
+    radar_conti::CollisonList coll_list;
     radar_conti::ObjectList object_list_;
     radar_conti::ClusterList cluster_list;
 

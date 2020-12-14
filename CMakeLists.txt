@@ -22,6 +22,8 @@ add_message_files(
   ClusterGeneral.msg
   ClusterQuality.msg
   ClusterStatus.msg
+  CollisonObj.msg
+  CollisonList.msg
   ObjectGeneral.msg
   ObjectExtended.msg
   ObjectQuality.msg
