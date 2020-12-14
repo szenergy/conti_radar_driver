@@ -1,6 +1,6 @@
 # ROS driver for Continental ARS 408-21
 
-This is a C++ ROS driver for ROS driver for Continental ARS 408-21 (or 404-21) automotive radar. The code is heavily based on the [ApexAI ROS2 Radar driver](https://gitlab.com/ApexAI/autowareclass2020/-/tree/master/code/src/09_Perception_Radar/Radar-Hands-On-Solution-WS) .
+This is a C++ ROS driver for Continental ARS 408-21 (or 404-21) automotive radar. The code is heavily based on the [ApexAI ROS2 Radar driver](https://gitlab.com/ApexAI/autowareclass2020/-/tree/master/code/src/09_Perception_Radar/Radar-Hands-On-Solution-WS) .
 
 ## Install and Build
 make sure to clone in to your catkin workspace src folder
