@@ -23,3 +23,5 @@ Change between Object detection and Cluster detection:\
 cansend can1 200#F8000000089C0000 // Objects detection with all extended properties`\
 `cansend can1 200#F8000000109C0000 // Clusters detection with all extended properties
 `
+
+Alternatively configure with https://github.com/szenergy/conti_radar_configurator forked from https://github.com/lf2653/myrepository.

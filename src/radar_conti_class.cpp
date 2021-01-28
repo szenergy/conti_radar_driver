@@ -1,5 +1,5 @@
 #include "radar_conti_ars408_component.hpp"
-
+#include <iostream>
 Radar_Conti::Radar_Conti(const ros::NodeHandle &nh) : nh(nh) {};
 
 void Radar_Conti::init(can::DriverInterfaceSharedPtr &driver_)
@@ -207,9 +207,9 @@ void Radar_Conti::publish_object_map() {
         //if you want to use a cube comment out the next 2 line
         mEgoCar.type = 1; // cube
         mEgoCar.action = 0; // add/modify
-        mEgoCar.pose.position.x = -2.0;
+        mEgoCar.pose.position.x = 0.0;
         mEgoCar.pose.position.y = 0.0;
-        mEgoCar.pose.position.z = 1.0;
+        mEgoCar.pose.position.z = 0.0;
 
         tf2::Quaternion myQuaternion;
         myQuaternion.setRPY(0, 0, M_PI/2);
@@ -218,9 +218,9 @@ void Radar_Conti::publish_object_map() {
         mEgoCar.pose.orientation.x = myQuaternion.getX();
         mEgoCar.pose.orientation.y = myQuaternion.getY();
         mEgoCar.pose.orientation.z = myQuaternion.getZ();
-        mEgoCar.scale.x = 1.0;
-        mEgoCar.scale.y = 1.0;
-        mEgoCar.scale.z = 1.0;
+        mEgoCar.scale.x = 0.2;
+        mEgoCar.scale.y = 0.2;
+        mEgoCar.scale.z = 0.2;
         mEgoCar.color.r = 0.0;
         mEgoCar.color.g = 0.0;
         mEgoCar.color.b = 1.0;
@@ -255,7 +255,7 @@ void Radar_Conti::publish_object_map() {
                 mtext.pose.orientation.z = myQuaternion.getZ();
                 // mtext.scale.x = 1.0;
                 // mtext.scale.y = 1.0;
-                mtext.scale.z = 2.0;
+                mtext.scale.z = 1.0;
                 mtext.color.r = 1.0;
                 mtext.color.g = 1.0;
                 mtext.color.b = 1.0;
@@ -273,9 +273,11 @@ void Radar_Conti::publish_object_map() {
                 mobject.action = 0; // add/modify
                 mobject.pose.position.x = itr->second.object_general.obj_distlong.data;
                 mobject.pose.position.y = itr->second.object_general.obj_distlat.data;
-                mobject.pose.position.z = 1.0;
+                mobject.pose.position.z = 0.0;
 
-                myQuaternion.setRPY(0, 0, 0);
+                myQuaternion.setRPY(0, 0, itr->second.object_extended.obj_orientationangle.data);
+                // TODO: itr->second.object_extended.obj_orientationangle.data is always 0
+                //myQuaternion.setRPY(0, 0, 2.0);
 
                 mobject.pose.orientation.w = myQuaternion.getW();
                 mobject.pose.orientation.x = myQuaternion.getX();
@@ -288,37 +290,82 @@ void Radar_Conti::publish_object_map() {
                 {
                         mobject.color.r = 1.0;
                         mobject.color.g = 0.0;
-                        mtext.text= "object_" + std::to_string(itr->first) + ": \n" 
-                        + " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) + "dBm^2" + " \n" 
-                        + " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
-                        + " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
-                        + " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data) + "degree" + " \n"
-                        + " Class: " + object_classes[itr->second.object_extended.obj_class.data] +"\n"
-                        + " Collison with Object\n";
+                        mtext.text= "object_" + std::to_string(itr->first) + ": \n" ;
+                        //+ " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) + "dBm^2" + " \n" 
+                        //+ " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
+                        //+ " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
+                        // + " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data) + "degree" + " \n"
+                        //+ " Class: " + object_classes[itr->second.object_extended.obj_class.data] +"\n"
+                        //+ " Collison with Object\n"
+                        //+ "Obj_ProbOfExist:" +   std::to_string(value);
                         radar_conti::CollisonObj collison_item;
                         collison_item.obj_id = itr->second.obj_id;
                         coll_list.objects.push_back(collison_item);
                 }
                 else
                 {
-                        mobject.color.r = 0.0;
-                        mobject.color.g = 1.0;
-                        mtext.text= "object_" + std::to_string(itr->first) + ": \n" 
-                        + " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) + "dBm^2" + " \n" 
-                        + " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
-                        + " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
-                        + " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data) + "degree" + " \n"
-                        + " Class: " + object_classes[itr->second.object_extended.obj_class.data] + "\n";
+                        double value;
+                        if (itr->second.object_quality.obj_probofexist.data==7)
+                        {
+                                value=100.0;
+                        }
+                        else if (itr->second.object_quality.obj_probofexist.data==6)
+                        {
+                                value=99.9;
+                        }
+                        else if (itr->second.object_quality.obj_probofexist.data==5)
+                        {
+                                value=99.0;
+                        }
+                        else if (itr->second.object_quality.obj_probofexist.data==4)
+                        {
+                                value=90.0;
+                        }
+                        else if (itr->second.object_quality.obj_probofexist.data==3)
+                        {
+                                value=75.0;
+                        }
+                        else if (itr->second.object_quality.obj_probofexist.data==2)
+                        {
+                                value=50.0;
+                        }
+                        else if (itr->second.object_quality.obj_probofexist.data==1)
+                        {
+                                value=25.0;
+                        }
+                        else if (itr->second.object_quality.obj_probofexist.data==0)
+                        {
+                                value=0.0;
+                        }
+                        
+                        std::stringstream ss;
+                        ss << "object_" << std::fixed << std::setprecision(1) << itr->first  << "\n" 
+                        //+ " RCS: " + std::to_string(itr->second.object_general.obj_rcs.data) // + "dBm^2" + " \n" 
+                        //+ " V_long: " +   std::to_string(itr->second.object_general.obj_vrellong.data) + "m/s" + " \n" 
+                        //+ " V_lat: " + std::to_string(itr->second.object_general.obj_vrellat.data) + "m/s" + " \n" 
+                        //+ " Orientation: " + std::to_string(itr->second.object_extended.obj_orientationangle.data); //+ "degree" + " \n"
+                        <<"PO " << value;
+                        mtext.text = ss.str();
+                        //+ " Class: " + object_classes[itr->second.object_extended.obj_class.data] + "\n";
                 }
-                mobject.color.b = 0.0;
-                mobject.color.a = 0.5;
+                // assign colors to each object ID (deterministic pseudo-random colors)
+                int i = int(itr->first);
+                int j = 100 - int(itr->first);
+                int k = itr->first + 5;
+                double r = double(i % 3) / 2.1;
+                double g = double(j % 21) / 21;
+                double b = double(k % 30) / 30;
+                mobject.color.r = r;
+                mobject.color.g = g;
+                mobject.color.b = b;
+                mobject.color.a = 0.6;
                 mobject.lifetime = ros::Duration(0.2);
                 mobject.frame_locked = false;
 
                 object_list_.objects.push_back(itr->second);
-
-                marker_array.markers.push_back(mobject);
-        
+                //if (TODO){
+                        marker_array.markers.push_back(mobject);
+                //}
                 marker_array.markers.push_back(mtext);
 
         }
@@ -345,9 +392,9 @@ void Radar_Conti::publish_cluster_map()
         //if you want to use a cube comment out the next 2 line
         mEgoCar.type = 1; // cube
         mEgoCar.action = 0; // add/modify
-        mEgoCar.pose.position.x = -2.0;
+        mEgoCar.pose.position.x = 0.0;
         mEgoCar.pose.position.y = 0.0;
-        mEgoCar.pose.position.z = 1.0;
+        mEgoCar.pose.position.z = 0.0;
 
         tf2::Quaternion myQuaternion;
         myQuaternion.setRPY(0, 0, M_PI/2);
@@ -356,9 +403,9 @@ void Radar_Conti::publish_cluster_map()
         mEgoCar.pose.orientation.x = myQuaternion.getX();
         mEgoCar.pose.orientation.y = myQuaternion.getY();
         mEgoCar.pose.orientation.z = myQuaternion.getZ();
-        mEgoCar.scale.x = 1.0;
-        mEgoCar.scale.y = 1.0;
-        mEgoCar.scale.z = 1.0;
+        mEgoCar.scale.x = 0.2;
+        mEgoCar.scale.y = 0.2;
+        mEgoCar.scale.z = 0.2;
         mEgoCar.color.r = 0.0;
         mEgoCar.color.g = 0.0;
         mEgoCar.color.b = 1.0;
@@ -402,9 +449,10 @@ void Radar_Conti::publish_cluster_map()
                 mtext.frame_locked = false;
                 mtext.type=9;
                 mtext.text= "Cluster" + std::to_string(itr->first) + ": \n" 
-                + " RCS: " + std::to_string(itr->second.cluster_general.cluster_rcs.data) + "dBm^2" + " \n" 
-                + " V_long: " +   std::to_string(itr->second.cluster_general.cluster_vrellong.data) + "m/s" + " \n" 
-                + " V_lat: " + std::to_string(itr->second.cluster_general.cluster_vrellat.data) + "m/s" + " \n";
+                + " RCS: " + std::to_string(itr->second.cluster_general.cluster_rcs.data) + "dBm^2"; // + " \n" 
+                //+ " V_long: " +   std::to_string(itr->second.cluster_general.cluster_vrellong.data) + "m/s" + " \n" 
+                //+ " V_lat: " + std::to_string(itr->second.cluster_general.cluster_vrellat.data) + "m/s" + " \n";
+                //+ " Orientation: " + std::to_string(itr->second.cluster_general.cluster_vrellon);
 
 
                 marker_array.markers.push_back(mtext);
