@@ -6,8 +6,8 @@ This is a C++ ROS driver for Continental ARS 408-21 (or 404-21) automotive radar
 make sure to clone in to your catkin workspace src folder
 
 Execute from the root of the workspace:
-`rosdep install --from-paths src --ignore-src -r -y`\
 `git clone https://github.com/mesmatyi/conti_radar_driver.git`\
+`rosdep install --from-paths src --ignore-src -r -y`\
 `catkin build` \
 or if you want to build the package separately: `catkin build radar_conti`
 
